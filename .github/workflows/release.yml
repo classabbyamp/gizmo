@@ -71,10 +71,16 @@ jobs:
     needs: goreleaser
     strategy:
       matrix:
-        config:
-          - { image: driver-station, desc: "Driver Station" }
-          - { image: fms, desc: "FMS Station" }
+        image:
+          - driver-station
+          - fms
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -83,14 +89,14 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Build ${{ matrix.config.desc }}
-        run: sh -x .release/build.sh ${{ matrix.config.image }}
+      - name: Build Image
+        run: sh -x .release/build.sh ${{ matrix.image }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: image-${{ matrix.config.image }}
-          path: ${{ matrix.config.image }}.zip
+          name: image-${{ matrix.image }}
+          path: ${{ matrix.image }}.zip
           if-no-files-found: error
 
   release:
