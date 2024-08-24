@@ -85,12 +85,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: goreleaser
+          path: dist
+
+      - run: ls -R
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Build Image
-        run: sh -x .release/build.sh ${{ matrix.image }}
+        run: sudo sh -x .release/build.sh ${{ matrix.image }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -106,7 +109,8 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: image-*
+          path: dist
+          merge-multiple: true
 
       - name: Upload artifacts
         uses: softprops/action-gh-release@v2
