@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   goreleaser:
@@ -36,7 +37,8 @@ jobs:
           repository: "${{ github.repository_owner }}/gizmo-platform.github.io"
           name: github-pages
           path: pkg/docs/mdbook/book/
-          github-token: ${{ secrets.DOCS_PAT }}  # needs actions:read permissions on the docs repository
+          # github-token: ${{ secrets.DOCS_PAT }}  # needs actions:read permissions on the docs repository
+          github-token: ${{ github.token }}
           run-id: ${{ steps.run_id.outputs.run_id }}
 
       - name: Set up Go
@@ -51,7 +53,7 @@ jobs:
           version: latest
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           GENERATE_EXTRA_ARGS: '-skip mdbook'
 
       - name: Set up QEMU
